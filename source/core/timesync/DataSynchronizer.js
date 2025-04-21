@@ -334,7 +334,7 @@ class DataSynchronizer {
         this.dataSynchronizer.setMaxTime(maxTime);
     }
 
-        /**
+    /**
      * Connect the dataSource then the protocol will be opened as well.
      */
     async isConnected() {
