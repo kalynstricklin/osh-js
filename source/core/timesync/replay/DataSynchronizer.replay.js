@@ -270,8 +270,8 @@ class DataSynchronizerReplay {
             return this.synchronizerWorker.postMessageWithAck({
                 message: 'init',
                 dataSources: dataSourcesForWorker,
-                replaySpeed: this.replaySpeed,
-                reconnect: this.reconnect,
+                replaySpeed: this.getReplaySpeed(),
+                reconnect: this.getReconnect(),
                 timerResolution: this.timerResolution,
                 masterTimeRefreshRate: this.masterTimeRefreshRate,
                 startTimestamp: this.getStartTimeAsTimestamp(),
@@ -306,7 +306,8 @@ class DataSynchronizerReplay {
         // bind dataSource data onto dataSynchronizer data
         try {
             await dataSource.setDataSynchronizer(this.timeSync);
-            dataSource.properties.replaySpeed = this.replaySpeed;
+            dataSource.properties.replaySpeed = this.getReplaySpeed();
+            dataSource.properties.reconnect = this.getReconnect();
         } catch (ex) {
             console.error("Cannot set the synchronizer to this DataSource", ex);
             throw ex;
@@ -485,6 +486,17 @@ class DataSynchronizerReplay {
     }
 
     /**
+     * Sets the reconnect value
+     */
+    async setReconnect(reconnect) {
+        this.reconnect = reconnect;
+        this.properties.reconnect = reconnect;
+        return this.synchronizerWorker.postMessageWithAck({
+            message: 'reconnect',
+            reconnect: reconnect,
+        });
+    }
+    /**
      * Sets the data source time range
      * @param {String} startTime - the startTime (in date ISO)
      * @param {String} endTime - the startTime (in date ISO)
@@ -495,11 +507,13 @@ class DataSynchronizerReplay {
     async setTimeRange(startTime = this.getStartTimeAsIsoDate(),
                        endTime = this.getEndTimeAsIsoDate(),
                        replaySpeed = this.getReplaySpeed(),
-                       reconnect = false) {
+                       reconnect = this.getReconnect()) {
         await this.disconnect();
         this.incVersion();
         // update properties of DataSynchronizer
         this.replaySpeed = replaySpeed;
+
+        this.reconnect = reconnect
 
         await this.setStartTime(startTime, false);
         await this.setEndTime(endTime, false);
@@ -549,6 +563,7 @@ class DataSynchronizerReplay {
             message: 'time-range',
             mode: this.getMode(),
             replaySpeed: this.getReplaySpeed(),
+            reconnect: this.getReconnect(),
             startTimestamp: this.getStartTimeAsTimestamp(),
             endTimestamp: this.getEndTimeAsTimestamp(),
             version: this.version(),

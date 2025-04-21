@@ -199,6 +199,23 @@ class TimeSeriesDatasource {
     setReplaySpeed(replaySpeed) {
         this.timeSeriesDataSource.setReplaySpeed(replaySpeed);
     }
+
+    /**
+     * Gets the reconnect
+     * @returns {Boolean} - the reconnect value
+     */
+    getReconnect() {
+        return this.reconnect;
+    }
+
+    /**
+     * Gets the reconnect
+     * @returns {Boolean} - reconnect
+     */
+    setReconnect(reconnect) {
+        this.timeSeriesDataSource.setReconnect(reconnect);
+    }
+
     //----------- ASYNCHRONOUS FUNCTIONS -----------------//
 
     /**
@@ -255,7 +272,7 @@ class TimeSeriesDatasource {
     async setTimeRange(startTime= this.getStartTimeAsIsoDate(),
                        endTime= this.getEndTimeAsIsoDate(),
                        replaySpeed= this.getReplaySpeed(),
-                       reconnect= false,
+                       reconnect= this.getReconnect(),
                        mode= this.getMode(),
                        version = this.version()
                        ) {
