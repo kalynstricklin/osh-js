@@ -32,6 +32,7 @@ class DataSynchronizerReplay {
      * @param {Number} [properties.mode=Mode.REPLAY] - mode of the data synchronizer
      * @param {String} properties.minTime - min range time as ISO date
      * @param {String} properties.maxTime - max range time as ISO date
+     * @param {Boolean} properties.reconnect - reconnect value
      * @param {Datasource[]} properties.dataSources - the dataSource array
      * @param {DataSynchronizer} timeSync - dataSynchronizer
      */
@@ -40,6 +41,7 @@ class DataSynchronizerReplay {
         this.id = properties.id || randomUUID();
         this.dataSources = (properties.dataSources) ? [...properties.dataSources] : [];
         this.replaySpeed = properties.replaySpeed || 1;
+        this.reconnect = properties.reconnect || false;
         this.timerResolution = properties.timerResolution || 5;
         this.masterTimeRefreshRate = properties.masterTimeRefreshRate || 250;
         this.initialized = false;
@@ -47,6 +49,7 @@ class DataSynchronizerReplay {
 
         this.properties = {};
         this.properties.replaySpeed = this.replaySpeed;
+        this.properties.reconnect = this.reconnect;
         this.properties.startTimestamp = undefined;
         this.properties.endTimestamp = undefined;
         this.properties.minTimestamp = undefined;
@@ -229,6 +232,14 @@ class DataSynchronizerReplay {
         return this.replaySpeed;
     }
 
+
+    /**
+     * Gets the reconnect
+     * @returns {Boolean} - the reconnect value
+     */
+    getReconnect() {
+        return this.reconnect;
+    }
     /**
      * Terminate the corresponding running WebWorker by calling terminate() on it.
      */
@@ -260,6 +271,7 @@ class DataSynchronizerReplay {
                 message: 'init',
                 dataSources: dataSourcesForWorker,
                 replaySpeed: this.replaySpeed,
+                reconnect: this.reconnect,
                 timerResolution: this.timerResolution,
                 masterTimeRefreshRate: this.masterTimeRefreshRate,
                 startTimestamp: this.getStartTimeAsTimestamp(),
@@ -499,7 +511,7 @@ class DataSynchronizerReplay {
                 this.getStartTimeAsIsoDate(),
                 this.getEndTimeAsIsoDate(),
                 this.getReplaySpeed(),
-                false,
+                this.getReconnect(),
                 this.getMode(),
                 this.version()
             ));

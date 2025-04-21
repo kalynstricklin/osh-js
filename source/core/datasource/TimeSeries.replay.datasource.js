@@ -162,19 +162,36 @@ class TimeSeriesReplayDatasource extends DataSource {
     }
 
     /**
-     * Gets the endTime
-     * @returns {String} - endTime as ISO date
+     * Gets the replay speed
+     * @returns {String} - replay speed
      */
     getReplaySpeed() {
         return this.properties.replaySpeed;
     }
 
     /**
-     * Gets the endTime
-     * @returns {String} - endTime as ISO date
+     * Sets the replay speed
+     *
      */
     setReplaySpeed(replaySpeed) {
         this.properties.replaySpeed = replaySpeed;
+    }
+
+
+    /**
+     * Gets the reconnect value
+     * @returns {String} - reconnect
+     */
+    getReconnect() {
+        return this.properties.reconnect;
+    }
+
+    /**
+     * Sets the reconnect value
+     *
+     */
+    setReconnect(reconnect) {
+        this.properties.reconnect = reconnect;
     }
 
     setVersion(version) {
@@ -311,7 +328,7 @@ class TimeSeriesReplayDatasource extends DataSource {
     async setTimeRange(startTime = this.getStartTimeAsIsoDate(),
                        endTime = this.getEndTimeAsIsoDate(),
                        replaySpeed = this.getReplaySpeed(),
-                       reconnect = false,
+                       reconnect = this.getReconnect(),
                        mode = this.getMode(),
                        version = this.version()
     ) {

@@ -258,6 +258,7 @@ class RangeSliderViewReplay extends View {
         if (type === 'end') {
             this.dataSourceObject.setTimeRange(new Date(startTime).toISOString(),
                 new Date(endTime).toISOString(), this.dataSourceObject.properties.replaySpeed, true);
+                // new Date(endTime).toISOString(), this.dataSourceObject.properties.replaySpeed, this.dataSourceObject.properties.reconnect);
         }
     }
 

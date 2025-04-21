@@ -26,6 +26,7 @@ class DataSynchronizer {
      * @param {Object} properties - the property of the object
      * @param {String} [properties.id=randomUUID] - id of the dataSynchronizer or random if not provided
      * @param {Number} [properties.replaySpeed=1] - replaySpeed value
+     * @param {Boolean} properties.reconnect - reconnect value
      * @param {Number} [properties.timerResolution=5] - interval in which data is played (in milliseconds)
      * @param {Number} [properties.masterTimeRefreshRate=250] - interval in which time value is send through broadcast channel (in milliseconds)
      * @param {Number} [properties.mode=Mode.REPLAY] - mode of the data synchronizer
@@ -197,6 +198,15 @@ class DataSynchronizer {
         return this.dataSynchronizer.getReplaySpeed();
     }
 
+
+    /**
+     * Gets the reconnect
+     * @returns {Boolean} - the reconnect
+     */
+    getReconnect() {
+        return this.dataSynchronizer.getReconnect();
+    }
+
     /**
      * Terminate the corresponding running WebWorker by calling terminate() on it.
      */
@@ -279,6 +289,14 @@ class DataSynchronizer {
         return this.dataSynchronizer.setReplaySpeed(replaySpeed)
     }
 
+
+    /**
+     * Sets the reconnect
+     */
+    async setReconnect(reconnect) {
+        return this.dataSynchronizer.setReconnect(reconnect)
+    }
+
     /**
      * Sets the data source time range
      * @param {String} startTime - the startTime (in date ISO)
@@ -289,7 +307,7 @@ class DataSynchronizer {
     async setTimeRange(startTime = this.getStartTimeAsIsoDate(),
                        endTime = this.getEndTimeAsIsoDate(),
                        replaySpeed = this.getReplaySpeed(),
-                       reconnect = false) {
+                       reconnect = this.getReconnect()) {
         return this.dataSynchronizer.setTimeRange(startTime,endTime, replaySpeed,reconnect);
     }
 
