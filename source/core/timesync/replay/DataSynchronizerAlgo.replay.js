@@ -3,12 +3,13 @@ import {Status} from "../../connector/Status.js";
 import DataSynchronizerAlgo from "../DataSynchronizerAlgo";
 
 class DataSynchronizerAlgoReplay extends DataSynchronizerAlgo {
-    constructor(dataSources, replaySpeed = 1, startTimestamp, endTimestamp, timerResolution = 5, version) {
+    constructor(dataSources, replaySpeed = 1, startTimestamp, endTimestamp, timerResolution = 5, version, reconnect) {
         super(dataSources,replaySpeed,timerResolution);
         this.replaySpeed = replaySpeed;
         this.startTimestamp = startTimestamp;
         this.endTimestamp = endTimestamp;
         this.version = version;
+        this.reconnect = reconnect
     }
 
     push(dataSourceId, dataBlocks) {
@@ -214,10 +215,16 @@ class DataSynchronizerAlgoReplay extends DataSynchronizerAlgo {
     setEndTimestamp(maxTimestamp) {
         this.endTimestamp = maxTimestamp;
     }
-    setTimeRange(startTimestamp, endTimestamp, replaySped) {
+
+    setReconnect(reconnect){
+        this.reconnect = reconnect;
+    }
+
+    setTimeRange(startTimestamp, endTimestamp, replaySped, reconnect) {
         this.replaySpeed = replaySped;
         this.startTimestamp = startTimestamp;
         this.endTimestamp = endTimestamp;
+        this.reconnect = reconnect;
         this.clockTimeRef = performance.now();
         this.reset();
         this.checkStart();
