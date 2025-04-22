@@ -517,7 +517,7 @@ class DataSynchronizerReplay {
                        endTime = this.getEndTimeAsIsoDate(),
                        replaySpeed = this.getReplaySpeed(),
                        reconnect = this.getReconnect()) {
-        await this.disconnect();
+        // await this.disconnect();
         this.incVersion();
         // update properties of DataSynchronizer
         this.replaySpeed = replaySpeed;
