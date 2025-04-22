@@ -32,7 +32,7 @@ class DataSynchronizerReplay {
      * @param {Number} [properties.mode=Mode.REPLAY] - mode of the data synchronizer
      * @param {String} properties.minTime - min range time as ISO date
      * @param {String} properties.maxTime - max range time as ISO date
-     * @param {Boolean} properties.reconnect - reconnect value
+     * @param {Boolean} [properties.reconnect] - reconnect value
      * @param {Datasource[]} properties.dataSources - the dataSource array
      * @param {DataSynchronizer} timeSync - dataSynchronizer
      */
@@ -41,7 +41,7 @@ class DataSynchronizerReplay {
         this.id = properties.id || randomUUID();
         this.dataSources = (properties.dataSources) ? [...properties.dataSources] : [];
         this.replaySpeed = properties.replaySpeed || 1;
-        this.reconnect = properties.reconnect || false;
+        this.reconnect = properties.reconnect || true;
         this.timerResolution = properties.timerResolution || 5;
         this.masterTimeRefreshRate = properties.masterTimeRefreshRate || 250;
         this.initialized = false;
@@ -224,6 +224,15 @@ class DataSynchronizerReplay {
         this.timeChanged();
     }
 
+    /**
+     * Sets the reconnect
+     */
+    async setReconnect(reconnect) {
+        return this.reconnect = reconnect;
+        if (!lazy) {
+            await this.updateAlgo();
+        }
+    }
     /**
      * Gets the replaySpeed
      * @returns {Number} - the replay speed
@@ -451,7 +460,7 @@ class DataSynchronizerReplay {
         this.checkStartEndTime();
         await this.updateAlgo();
         for (let dataSource of this.dataSources) {
-            await dataSource.setTimeRange(this.getStartTimeAsIsoDate(), this.getEndTimeAsIsoDate(), this.getReplaySpeed(), true);
+            await dataSource.setTimeRange(this.getStartTimeAsIsoDate(), this.getEndTimeAsIsoDate(), this.getReplaySpeed(), this.getReconnect());
         }
 
 
