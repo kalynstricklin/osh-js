@@ -26,7 +26,7 @@ class DataSynchronizer {
      * @param {Object} properties - the property of the object
      * @param {String} [properties.id=randomUUID] - id of the dataSynchronizer or random if not provided
      * @param {Number} [properties.replaySpeed=1] - replaySpeed value
-     * @param {Boolean} properties.reconnect - reconnect value
+     * @param {Boolean} [properties.reconnect] - reconnect value
      * @param {Number} [properties.timerResolution=5] - interval in which data is played (in milliseconds)
      * @param {Number} [properties.masterTimeRefreshRate=250] - interval in which time value is send through broadcast channel (in milliseconds)
      * @param {Number} [properties.mode=Mode.REPLAY] - mode of the data synchronizer

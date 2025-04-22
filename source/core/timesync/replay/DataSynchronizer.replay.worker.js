@@ -24,6 +24,7 @@ let masterTimeRefreshRate;
 let startTimestamp;
 let endTimestamp;
 let timerResolution;
+let reconnect;
 
 self.onmessage = async (event) => {
     handleMessage(event);
@@ -43,6 +44,7 @@ async function handleMessage(event) {
             endTimestamp = event.data.endTimestamp;
             version = event.data.version;
             timerResolution = event.data.timerResolution;
+            reconnect = event.data.reconnect;
 
             dataSynchronizerAlgo = new DataSynchronizerAlgoReplay(
                 event.data.dataSources,
@@ -50,7 +52,8 @@ async function handleMessage(event) {
                 startTimestamp,
                 endTimestamp,
                 event.data.timerResolution,
-                version
+                version,
+                reconnect
             );
             dataSynchronizerAlgo.onClose = onClose;
             dataSynchronizerAlgo.onData = onData;
@@ -70,6 +73,7 @@ async function handleMessage(event) {
             reset();
         } else if (event.data.message === 'connect') {
             startMasterTimeInterval(masterTimeRefreshRate);
+
             dataSynchronizerAlgo.checkStart();
             version = event.data.version;
         } else if (event.data.message === 'is-connected') {
@@ -91,7 +95,9 @@ async function handleMessage(event) {
                 reset();
                 dataSynchronizerAlgo.replaySpeed = event.data.replaySpeed;
             }
-        } else if (event.data.message === 'set-max-time') {
+        } else if (event.data.message === 'reconnect') {
+            dataSynchronizerAlgo.reconnect = event.data.reconnect;
+        }else if (event.data.message === 'set-max-time') {
             dataSynchronizerAlgo.setEndTimestamp(event.data.maxTimestamp);
         } else if (event.data.message === 'time-range') {
             setTimeRange(
@@ -100,7 +106,8 @@ async function handleMessage(event) {
                 event.data.mode,
                 event.data.replaySpeed,
                 event.data.version,
-                event.data.dataSources
+                event.data.dataSources,
+                event.data.reconnect
             )
         } else if (event.data.message === 'data') {
             checkMasterTime();
@@ -116,7 +123,7 @@ async function handleMessage(event) {
         self.postMessage(resp);
     }
 }
-function setTimeRange(startTimestamp, endTimestamp, mode, replaySpeed, newVersion, dsArray) {
+function setTimeRange(startTimestamp, endTimestamp, mode, replaySpeed, newVersion, dsArray, reconnect) {
     reset();
     version = newVersion;
 
@@ -126,7 +133,8 @@ function setTimeRange(startTimestamp, endTimestamp, mode, replaySpeed, newVersio
         startTimestamp,
         endTimestamp,
         timerResolution,
-        version
+        version,
+        reconnect
     );
     dataSynchronizerAlgo.onEnd = onEnd;
     dataSynchronizerAlgo.onStart = onStart;
