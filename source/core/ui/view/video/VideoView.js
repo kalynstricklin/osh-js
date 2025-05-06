@@ -125,6 +125,10 @@ class VideoView extends View {
     }
 
     onDecode(decodedFrame, frameType) {}
+
+    getInternalView(){
+        return this.videoView;
+    }
 }
 
 export default VideoView;
