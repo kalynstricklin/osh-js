@@ -165,6 +165,8 @@ class WebCodecView extends CanvasView {
     initDecoder() {
         this.gl = this.canvasElt.getContext("bitmaprenderer");
 
+        const avcC = mp4boxFile.getTrackById(track_id).avcC;
+
         const init = {
             output: async (videoFrame) => {
                 // check picture width
@@ -181,7 +183,7 @@ class WebCodecView extends CanvasView {
                         codec: this.codec,
                         codedWidth: this.width,
                         codedHeight:this.height,
-                        description: this.codec
+                        description: new Uint8Array(avcCData).buffer
                     });
                 }
                 const bitmap = await createImageBitmap(videoFrame);
@@ -205,7 +207,7 @@ class WebCodecView extends CanvasView {
                 codec: this.codec,
                 codedWidth: this.width,
                 codedHeight: this.height,
-                description: this.codec
+                description: new Uint8Array(avcCData).buffer
             });
             this.codecConfigured = true;
         }catch (ex) {
