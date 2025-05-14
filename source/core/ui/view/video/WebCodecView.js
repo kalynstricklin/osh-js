@@ -22,17 +22,17 @@ import {FrameType} from "./FrameType";
  import WebCodecView from 'core/ui/view/video/WebCodecView.js';
 
  let videoView = new WebCodecView({
-  container: 'video-h264-container',
-  css: 'video-h264',
-  name: 'UAV Video',
-  layers: [
-      new DataLayer({
-        dataSourceId: videoDataSource.id,
-        getFrameData: (rec) => rec.videoFrame,
-        getTimestamp: (rec) => rec.timestamp
-      })
-  ]
-});
+ container: 'video-h264-container',
+ css: 'video-h264',
+ name: 'UAV Video',
+ layers: [
+ new DataLayer({
+ dataSourceId: videoDataSource.id,
+ getFrameData: (rec) => rec.videoFrame,
+ getTimestamp: (rec) => rec.timestamp
+ })
+ ]
+ });
  */
 
 class WebCodecView extends CanvasView {
@@ -87,11 +87,12 @@ class WebCodecView extends CanvasView {
             'vp9':  'vp09.02.10.10.01.09.16.09.01',
             'vp8':  'vp08.00.41.08',
             'h264': 'avc1.42e01e',
-            'h265': 'hev1.1.6.L123.00'
+            'h265': 'hev1.1.6.L123.00',
+            'av1': 'av01.0.08M.10.0.110.09'
         };
 
         // default use H264 codec
-        this.codec = this.codecMap['h264'];
+        this.codec = this.codecMap['av1'];
 
         if(isDefined(properties.codec)) {
             if(!properties.codec in this.codecMap) {
@@ -180,6 +181,7 @@ class WebCodecView extends CanvasView {
                         codec: this.codec,
                         codedWidth: this.width,
                         codedHeight:this.height,
+                        description: this.codec
                     });
                 }
                 const bitmap = await createImageBitmap(videoFrame);
@@ -203,6 +205,7 @@ class WebCodecView extends CanvasView {
                 codec: this.codec,
                 codedWidth: this.width,
                 codedHeight: this.height,
+                description: this.codec
             });
             this.codecConfigured = true;
         }catch (ex) {
@@ -256,7 +259,7 @@ class WebCodecView extends CanvasView {
     async decode(pktSize, pktData, timestamp, roll) {
         if (this.codecConfigured) {
             let key = false;
-            if(this.codec === this.codecMap['h264']) {
+            if(this.codec === this.codecMap['av1']) {
                 // optimize for H264
                 // H264 logic
                 key = pktData[26] === 101 && pktData[25] === 1 && pktData[24] === 0 && pktData[23] === 0;
