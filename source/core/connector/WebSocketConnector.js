@@ -60,6 +60,17 @@ class WebSocketConnector extends DataConnector {
      */
     doRequest(extraUrl = this.extraUrl,queryString= this.queryString) {
         if (!this.init) {
+
+            if(this.isConnected()){ //checks readystate and this.ws isnt null
+                console.warn("Websocket connection already exists and is open");
+                return;
+            }
+
+            if(this.ws){
+                this.ws.close();
+                this.ws = null;
+            }
+
             this.extraUrl = extraUrl;
             this.queryString = queryString;
             let fullUrl = this.getUrl() + extraUrl;
@@ -123,6 +134,17 @@ class WebSocketConnector extends DataConnector {
     doAsyncRequest(extraUrl = this.extraUrl,queryString= this.queryString) {
         return new Promise(async (resolve, reject) => {
             if (!this.init) {
+
+                if(this.isConnected()){ //checks readystate and this.ws isnt null
+                    console.warn("Websocket connection already exists and is open");
+                    return;
+                }
+
+                if(this.ws){
+                    this.ws.close();
+                    this.ws = null;
+                }
+
                 this.extraUrl = extraUrl;
                 this.queryString = queryString;
                 let fullUrl = this.getUrl() + extraUrl;
