@@ -45,6 +45,9 @@ class Observations extends ConnectedSystemsApi {
         return new Collection(this.baseUrl() + API.observations.search, observationFilter, pageSize,this.conSysApiFetchObservationParser);
     }
 
+    async getObservationCount(){
+        return new Collection(this.baseUrl() + API.observations.search)
+    }
     /**
      * Get a specific observation resource by ID
      * @param {string} observationId ID of requested observation
