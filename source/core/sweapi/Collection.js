@@ -20,14 +20,14 @@ class Collection {
     /**
      *
      */
-    constructor(url, filter, pageSize, parser, responseFormat = 'json') {
+    constructor(url, filter, pageSize, parser, responseFormat = 'json', total) {
         this.url = url;
         this.filter = filter;
         this.pageSize = pageSize;
         this.parser = parser;
         this.pageOffset = 0;
         this.init = false;
-        this.total = 0;
+        this.total = total;
         this.collectionDataParser = new SweCollectionDataParser(filter.props.format);
         this.responseFormat = responseFormat;
         this.currentPage = -1;
@@ -39,6 +39,30 @@ class Collection {
      */
     hasNext() {
         return this.pageOffset !== -1;
+    }
+
+    async fetchCount() {
+        const queryString = `${this.filter.toQueryString()}`;
+        const fullUrl = this.url + '/count' + '?' + queryString;
+
+        const jsonResponse = await fetch(fullUrl, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {}
+        }).then((response) => {
+            if (!response.ok) {
+                const err = new Error(`Got ${response.status} response from ${fullUrl}`);
+                err.response = response;
+                throw err;
+            }
+            if (this.responseFormat === 'json') {
+                return response.json();
+            } else if (this.responseFormat === 'arraybuffer') {
+                return response.arrayBuffer();
+            }
+        });
+
+        return this.parseResponse(jsonResponse);
     }
 
     async fetchData(offset) {
@@ -63,6 +87,11 @@ class Collection {
         });
 
         return this.parseResponse(jsonResponse);
+    }
+
+    async getTotalCount(){
+        const count = await this.fetchCount();
+        return count;
     }
 
     async parseResponse(jsonResponse) {

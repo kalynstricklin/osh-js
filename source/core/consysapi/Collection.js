@@ -14,7 +14,7 @@
 
  ******************************* END LICENSE BLOCK ***************************/
 
-import SweCollectionDataParser from "../parsers/consysapi/collection/SweCollectionDataParser";
+import SweCollectionDataParser from "../parsers/sweapi/collection/SweCollectionDataParser";
 
 class Collection {
     /**
@@ -41,6 +41,30 @@ class Collection {
         return this.pageOffset !== -1;
     }
 
+    async fetchCount() {
+        const queryString = `${this.filter.toQueryString()}`;
+        const fullUrl = this.url + '/count' + '?' + queryString;
+
+        const jsonResponse = await fetch(fullUrl, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {}
+        }).then((response) => {
+            if (!response.ok) {
+                const err = new Error(`Got ${response.status} response from ${fullUrl}`);
+                err.response = response;
+                throw err;
+            }
+            if (this.responseFormat === 'json') {
+                return response.json();
+            } else if (this.responseFormat === 'arraybuffer') {
+                return response.arrayBuffer();
+            }
+        });
+
+        return this.parseResponse(jsonResponse);
+    }
+
     async fetchData(offset) {
         const queryString = `${this.filter.toQueryString()}&offset=${offset}&limit=${this.pageSize}`;
         const fullUrl = this.url + '?' + queryString;
@@ -63,6 +87,11 @@ class Collection {
         });
 
         return this.parseResponse(jsonResponse);
+    }
+
+    async getTotalCount(){
+        const count = await this.fetchCount();
+        return count;
     }
 
     async parseResponse(jsonResponse) {
