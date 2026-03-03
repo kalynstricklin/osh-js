@@ -1,5 +1,7 @@
-import * as ffmpegModule from '../ffmpeg/ffmpeg';
-const OSH = ffmpegModule.default || ffmpegModule;
+// import * as ffmpegModule from '../ffmpeg/ffmpeg';
+// const OSH = ffmpegModule.default || ffmpegModule;
+
+import OSH from '../ffmpeg/ffmpeg';
 
 import {isDefined} from "../../../utils/Utils";
 
