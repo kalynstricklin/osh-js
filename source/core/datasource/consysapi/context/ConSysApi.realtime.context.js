@@ -66,8 +66,10 @@ class ConSysApiRealTimeContext extends ConSysApiContext {
         messages = Array.isArray(messages) ? messages : [messages];
         let results = messages;
         let version = this.properties.version;
-        for(let message of messages) {
-            message.version = version;
+        if (version) {
+            for (let message of messages) {
+                message.version = version;
+            }
         }
         this.handleData(results, format);
     }
